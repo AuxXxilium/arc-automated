@@ -120,7 +120,6 @@ STATUS=`curl --insecure -w "%{http_code}" -L \
     done < <(readConfigArray "remove" "/tmp/update-list.yml")
   arc-reboot.sh config
 fi
-automatedbuild
 }
 
 ###############################################################################
@@ -159,7 +158,6 @@ function automatedbuild() {
   DIRTY=1
   dialog --backtitle "`backtitle`" --title "ARC Automated Config" \
     --infobox "Model Configuration successfull!" 0 0  
-  arcnet
 }
 
 ###############################################################################
@@ -210,7 +208,6 @@ function arcnet() {
       --infobox "ARC Network configuration successfull!" 0 0
   sleep 3
   dialog --clear --no-items --backtitle "`backtitle`"
-  make
 }
 
 ###############################################################################
@@ -251,12 +248,12 @@ function make() {
   echo "Cleaning"
   rm -rf "${UNTAR_PAT_PATH}"
 
+  DIRTY=0
+
   echo "Ready!"
   dialog --backtitle "`backtitle`" --title "ARC Automated Setup" \
     --infobox "Automated Configuration successfull! ARC will boot into DSM soon!" 0 0  
   sleep 3
-  DIRTY=0
-  boot
 }
 
 ###############################################################################
@@ -446,4 +443,7 @@ if [ "x$1" = "xb" -a -n "${MODEL}" -a -n "${BUILD}" -a loaderIsConfigured ]; the
   boot
 fi
 automatedupdate
-clear
+automatedbuild
+arcnet
+make
+boot
