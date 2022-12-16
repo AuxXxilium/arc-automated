@@ -84,7 +84,7 @@ if [ $? -ne 0 -o -z "${TAG}" ]; then
       --msgbox "Error checking new version" 0 0
     continue
 fi
-if [ ${TAG} -gt ${ACTUALVERSION} ]; then
+if [ "${TAG}" -gt "${ACTUALVERSION}" ]; then
 dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
   --infobox "Downloading last version ${TAG}" 0 0
 # Download update file
