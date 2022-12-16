@@ -129,10 +129,10 @@ function automatedbuild() {
   # Write config
   writeConfigKey "build" "42962" "${USER_CONFIG_FILE}"
   writeConfigKey "model" "DS3622xs+" "${USER_CONFIG_FILE}"
+  MODEL="`readConfigKey "model" "${USER_CONFIG_FILE}"`"
   SN="`readModelKey "${MODEL}" "serial"`"
   writeConfigKey "sn" "${SN}" "${USER_CONFIG_FILE}"
   # Write Addons and Modules to Config
-  MODEL="`readConfigKey "model" "${USER_CONFIG_FILE}"`"
   PLATFORM="`readModelKey "${MODEL}" "platform"`"
   BUILD="`readConfigKey "build" "${USER_CONFIG_FILE}"`"
   KVER="`readModelKey "${MODEL}" "builds.${BUILD}.kver"`"
@@ -446,4 +446,4 @@ automatedupdate
 automatedbuild
 arcnet
 make
-boot
+reboot
