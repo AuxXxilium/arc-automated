@@ -1,6 +1,6 @@
 # ARC Automated Redpill Loader
 
-## Project Status: [![Build image](https://github.com/AuxXxilium/arc/actions/workflows/main.yml/badge.svg)](https://github.com/AuxXxilium/arc/actions/workflows/main.yml) [![wakatime](https://wakatime.com/badge/github/AuxXxilium/arc.svg)](https://wakatime.com/badge/github/AuxXxilium/arc)
+## Project Status: [![Build image](https://github.com/AuxXxilium/arc-automated/actions/workflows/main.yml/badge.svg)](https://github.com/AuxXxilium/arc-automated/actions/workflows/main.yml) [![wakatime](https://wakatime.com/badge/github/AuxXxilium/arc.svg)](https://wakatime.com/badge/github/AuxXxilium/arc)
 
 ## Important
 
