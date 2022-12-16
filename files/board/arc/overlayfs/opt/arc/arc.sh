@@ -67,7 +67,7 @@ function backtitle() {
   if [ -n "${PORTMAP}" ]; then
     BACKTITLE+=" RAID/SCSI"
   else
-    BACKTITLE+=" SATA/HBA"
+    BACKTITLE+=" SATA"
   fi
   echo ${BACKTITLE}
 }
