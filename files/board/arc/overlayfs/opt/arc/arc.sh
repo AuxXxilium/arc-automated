@@ -25,6 +25,11 @@ if grep -q ^flags.*\ hypervisor\  /proc/cpuinfo; then
     HYPERVISOR=$(lscpu | grep Hypervisor | awk '{print $3}')
 fi
 
+# Get SCSI Config
+if [ $(lspci -nn | grep -ie "\[0100\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
+    writeConfigKey "cmdline.SataPortMap" "1" "${USER_CONFIG_FILE}"
+fi
+
 # Dirty flag
 DIRTY=0
 
@@ -40,7 +45,7 @@ PORTMAP="`readConfigKey "cmdline.SataPortMap" "${USER_CONFIG_FILE}"`"
 ###############################################################################
 # Mounts backtitle dynamically
 function backtitle() {
-  BACKTITLE="ARC v${ARC_VERSION} |"
+  BACKTITLE="ARC Automated v${ARC_VERSION} |"
   if [ -n "${MODEL}" ]; then
     BACKTITLE+=" ${MODEL}"
   else
@@ -51,12 +56,6 @@ function backtitle() {
     BACKTITLE+=" ${BUILD}"
   else
     BACKTITLE+=" (no build)"
-  fi
-    BACKTITLE+=" |"
-  if [ -n "${SN}" ]; then
-    BACKTITLE+=" ${SN}"
-  else
-    BACKTITLE+=" (no SN)"
   fi
     BACKTITLE+=" |"
   if [ -n "${IP}" ]; then
@@ -70,12 +69,6 @@ function backtitle() {
   else
     BACKTITLE+=" SATA/HBA"
   fi
-    BACKTITLE+=" |"
-  if [ -n "${HYPERVISOR}" ]; then
-    BACKTITLE+=" ${HYPERVISOR}"
-  else
-    BACKTITLE+=" Native"
-  fi
   echo ${BACKTITLE}
 }
 
@@ -85,7 +78,7 @@ function automatedupdate() {
 dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
   --infobox "Checking last version" 0 0
 ACTUALVERSION="v${ARC_VERSION}"
-TAG="`curl --insecure -s https://api.github.com/repos/AuxXxilium/arc/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`"
+TAG="`curl --insecure -s https://api.github.com/repos/AuxXxilium/arc-automated/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`"
 if [ $? -ne 0 -o -z "${TAG}" ]; then
     dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
       --msgbox "Error checking new version" 0 0
@@ -96,7 +89,7 @@ dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
   --infobox "Downloading last version ${TAG}" 0 0
 # Download update file
 STATUS=`curl --insecure -w "%{http_code}" -L \
-  "https://github.com/AuxXxilium/arc/releases/download/${TAG}/update.zip" -o /tmp/update.zip`
+  "https://github.com/AuxXxilium/arc-automated/releases/download/${TAG}/update.zip" -o /tmp/update.zip`
   if [ $? -ne 0 -o ${STATUS} -ne 200 ]; then
       dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
         --msgbox "Error downloading update file" 0 0
