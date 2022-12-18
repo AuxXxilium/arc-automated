@@ -67,7 +67,7 @@ function backtitle() {
   if [ -n "${PORTMAP}" ]; then
     BACKTITLE+=" RAID/SCSI"
   else
-    BACKTITLE+=" SATA/HBA"
+    BACKTITLE+=" SATA"
   fi
   echo ${BACKTITLE}
 }
@@ -84,7 +84,7 @@ if [ $? -ne 0 -o -z "${TAG}" ]; then
       --msgbox "Error checking new version" 0 0
     continue
 fi
-if [ ${TAG} -gt ${ACTUALVERSION} ]; then
+if [ "${TAG}" -ne "${ACTUALVERSION}" ]; then
 dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
   --infobox "Downloading last version ${TAG}" 0 0
 # Download update file
@@ -120,7 +120,6 @@ STATUS=`curl --insecure -w "%{http_code}" -L \
     done < <(readConfigArray "remove" "/tmp/update-list.yml")
   arc-reboot.sh config
 fi
-automatedbuild
 }
 
 ###############################################################################
@@ -130,10 +129,10 @@ function automatedbuild() {
   # Write config
   writeConfigKey "build" "42962" "${USER_CONFIG_FILE}"
   writeConfigKey "model" "DS3622xs+" "${USER_CONFIG_FILE}"
+  MODEL="`readConfigKey "model" "${USER_CONFIG_FILE}"`"
   SN="`readModelKey "${MODEL}" "serial"`"
   writeConfigKey "sn" "${SN}" "${USER_CONFIG_FILE}"
   # Write Addons and Modules to Config
-  MODEL="`readConfigKey "model" "${USER_CONFIG_FILE}"`"
   PLATFORM="`readModelKey "${MODEL}" "platform"`"
   BUILD="`readConfigKey "build" "${USER_CONFIG_FILE}"`"
   KVER="`readModelKey "${MODEL}" "builds.${BUILD}.kver"`"
@@ -159,7 +158,6 @@ function automatedbuild() {
   DIRTY=1
   dialog --backtitle "`backtitle`" --title "ARC Automated Config" \
     --infobox "Model Configuration successfull!" 0 0  
-  arcnet
 }
 
 ###############################################################################
@@ -210,7 +208,6 @@ function arcnet() {
       --infobox "ARC Network configuration successfull!" 0 0
   sleep 3
   dialog --clear --no-items --backtitle "`backtitle`"
-  make
 }
 
 ###############################################################################
@@ -251,12 +248,12 @@ function make() {
   echo "Cleaning"
   rm -rf "${UNTAR_PAT_PATH}"
 
+  DIRTY=0
+
   echo "Ready!"
   dialog --backtitle "`backtitle`" --title "ARC Automated Setup" \
     --infobox "Automated Configuration successfull! ARC will boot into DSM soon!" 0 0  
   sleep 3
-  DIRTY=0
-  boot
 }
 
 ###############################################################################
@@ -446,4 +443,7 @@ if [ "x$1" = "xb" -a -n "${MODEL}" -a -n "${BUILD}" -a loaderIsConfigured ]; the
   boot
 fi
 automatedupdate
-clear
+automatedbuild
+arcnet
+make
+reboot

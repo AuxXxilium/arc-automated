@@ -116,8 +116,8 @@ jobs:
         with:
           name: Images
           path: |
-            arc-automated.img
-            arc-automated*.vmdk
+            arc.img
+            arc*.vmdk
           retention-days: 5
 
       # Publish a release if is a tag

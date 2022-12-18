@@ -1,6 +1,6 @@
 # ARC Automated Redpill Loader
 
-## Project Status: [![Build image](https://github.com/AuxXxilium/arc/actions/workflows/main.yml/badge.svg)](https://github.com/AuxXxilium/arc/actions/workflows/main.yml) [![wakatime](https://wakatime.com/badge/github/AuxXxilium/arc.svg)](https://wakatime.com/badge/github/AuxXxilium/arc)
+## Project Status: [![Build image](https://github.com/AuxXxilium/arc-automated/actions/workflows/main.yml/badge.svg)](https://github.com/AuxXxilium/arc-automated/actions/workflows/main.yml) [![wakatime](https://wakatime.com/badge/github/AuxXxilium/arc.svg)](https://wakatime.com/badge/github/AuxXxilium/arc)
 
 ## Important
 
@@ -26,22 +26,14 @@ Another important point is that the loader detects whether or not the CPU has th
 
 I developed a simple patch to no longer display the DUMMY port error on models without device-tree, the user will be able to install without having to worry about it.
 
-## Choose a Model
+## ARC Automated installs the System as an DS3622x+
 
-- DS3622xs+ / RS4021xs+
+- DS3622xs+
   + Best Hardwaresupport
   + Support for RAID/SCSI/HBA Controller
   + NVMe Cache through Addon working
   + Support for Hypervisor (read more below)
   - Actually no Hardwareacceleration with Intel Graphics
-
-- DS918+ / DS920+ / DS1621+ / DVA3219 / DVA3221
-  + Possible to get i915 (Intel Graphics) working
-  + NVMe Cache through Addon working
-  - No Support for RAID/SCSI/HBA Controller
-  - Only support for SATA Controller
-  - CPU needs FMA3 Instructions
-  - Can make trouble in Hypervisor
 
 ## ARC Loader - Confirmed working
 

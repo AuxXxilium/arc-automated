@@ -57,7 +57,7 @@ MODULES_DIR="${PWD}/files/board/arc/p3/modules"
 # Copy files
 echo "Copying files"
 VERSION=`cat VERSION`
-sed 's/^arc_VERSION=.*/arc_VERSION="'${VERSION}'"/' -i files/board/arc/overlayfs/opt/arc/include/consts.sh
+sed 's/^ARC_VERSION=.*/ARC_VERSION="'${VERSION}'"/' -i files/board/arc/overlayfs/opt/arc/include/consts.sh
 echo "${VERSION}" > files/board/arc/p1/ARC-VERSION
 cp -Ru files/* .buildroot/
 
@@ -72,9 +72,9 @@ qemu-img convert -O vmdk arc.img arc-dyn.vmdk
 qemu-img convert -O vmdk -o adapter_type=lsilogic arc.img -o subformat=monolithicFlat arc.vmdk
 [ -x test.sh ] && ./test.sh
 rm -f *.zip
-zip -9 "arc-${VERSION}.img.zip" arc.img
-zip -9 "arc-${VERSION}.vmdk-dyn.zip" arc-dyn.vmdk
-zip -9 "arc-${VERSION}.vmdk-flat.zip" arc.vmdk arc-flat.vmdk
+zip -9 "arc-automated-${VERSION}.img.zip" arc.img
+zip -9 "arc-automated-${VERSION}.vmdk-dyn.zip" arc-dyn.vmdk
+zip -9 "arc-automated-${VERSION}.vmdk-flat.zip" arc.vmdk arc-flat.vmdk
 sha256sum update-list.yml > sha256sum
 yq '.replace | explode(.) | to_entries | map([.key])[] | .[]' update-list.yml | while read F; do
   (cd `dirname ${F}` && sha256sum `basename ${F}`) >> sha256sum

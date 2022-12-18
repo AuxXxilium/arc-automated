@@ -87,7 +87,6 @@ if [ ! -f "${USER_CONFIG_FILE}" ]; then
   writeConfigKey "addons.cpuinfo" "" "${USER_CONFIG_FILE}"
   writeConfigKey "addons.nvme" "" "${USER_CONFIG_FILE}"
   writeConfigKey "addons.powersched" "" "${USER_CONFIG_FILE}"
-  writeConfigKey "addons.reducelog" "" "${USER_CONFIG_FILE}"
   writeConfigKey "modules" "{}" "${USER_CONFIG_FILE}"
   # Initialize with real MAC
   writeConfigKey "cmdline.netif_num" "1" "${USER_CONFIG_FILE}"
