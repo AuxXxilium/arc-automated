@@ -26,7 +26,7 @@ if grep -q ^flags.*\ hypervisor\  /proc/cpuinfo; then
 fi
 
 # Get SCSI Config
-if [ $(lspci -nn | grep -ie "\[0100\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
+if [ $(lspci -nn | grep -ie "\[0100\]" grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
     writeConfigKey "cmdline.SataPortMap" "1" "${USER_CONFIG_FILE}"
 fi
 
