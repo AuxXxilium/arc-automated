@@ -6,15 +6,20 @@ lshw -class network -short > "${TMP_PATH}/netconf"
 if grep -q ^flags.*\ hypervisor\  /proc/cpuinfo; then
     MACHINE="VIRTUAL"
     HYPERVISOR=$(lscpu | grep Hypervisor | awk '{print $3}')
+else
+    MACHINE="NATIVE"
 fi
 
-# Check for Raid/SCSI
-if [ $(lspci -nn | grep -ie "\[0100\]" grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
-  if [ "${MASHINE}" = "VIRTUAL" ]; then
-    writeConfigKey "cmdline.SataPortMap" "1" "${USER_CONFIG_FILE}"
-  else
-    deleteConfigKey "cmdline.SataPortMap" "${USER_CONFIG_FILE}"
-  fi
-elif [ $(lspci -nn | grep -ie "\[0101\]" grep -ie "\[0106\]" | wc -l) -gt 0 ]; then
-  deleteConfigKey "cmdline.SataPortMap" "${USER_CONFIG_FILE}"
+# Check for RAID/SCSI
+if [ $(lspci -nn | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
+    ADRAID="1"
+else
+    ADRAID="0"
+fi
+
+# Check for SATA
+if [ $(lspci -nn | grep -ie "\[0106\]" | wc -l) -gt 0 ]; then
+    ADSATA="1"
+else
+    ADSATA="0"
 fi

@@ -27,7 +27,6 @@ KEYMAP="`readConfigKey "keymap" "${USER_CONFIG_FILE}"`"
 LKM="`readConfigKey "lkm" "${USER_CONFIG_FILE}"`"
 DIRECTBOOT="`readConfigKey "directboot" "${USER_CONFIG_FILE}"`"
 SN="`readConfigKey "sn" "${USER_CONFIG_FILE}"`"
-PORTMAP="`readConfigKey "cmdline.SataPortMap" "${USER_CONFIG_FILE}"`"
 
 ###############################################################################
 # Mounts backtitle dynamically
@@ -51,10 +50,10 @@ function backtitle() {
     BACKTITLE+=" (no IP)"
   fi
     BACKTITLE+=" |"
-  if [ -n "${PORTMAP}" ]; then
-    BACKTITLE+=" RAID/SCSI"
+  if [ -n "${HYPERVISOR}" ]; then
+    BACKTITLE+=" ${MACHINE}/${HYPERVISOR}"
   else
-    BACKTITLE+=" SATA"
+    BACKTITLE+=" ${MACHINE}"
   fi
   echo ${BACKTITLE}
 }
@@ -145,6 +144,29 @@ function automatedbuild() {
   DIRTY=1
   dialog --backtitle "`backtitle`" --title "ARC Automated Config" \
     --infobox "Model Configuration successfull!" 0 0  
+}
+
+###############################################################################
+# Make Disk Config
+function arcdisk() {
+  # Check for Raid/SCSI // 104=RAID // 106=SATA // 107=HBA/SCSI
+  if [ $(lspci -nn | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ] && [ "${MACHINE}" -eq "VIRTUAL"]; then
+    writeConfigKey "cmdline.SataPortMap" "18" "${USER_CONFIG_FILE}"
+  elif [ $(lspci -nn | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ] && [ "${MACHINE}" -eq "NATIVE" ]; then
+    writeConfigKey "cmdline.SataPortMap" "8" "${USER_CONFIG_FILE}"
+  elif [ $(lspci -nn | grep -ie "\[0106\]" | wc -l) -gt 0 ] && [ $(lspci -nn | grep -ie "\[0107\]" | wc -l) -gt 0 ] && [ "${MACHINE}" -eq "NATIVE" ]; then
+    writeConfigKey "cmdline.SataPortMap" "88" "${USER_CONFIG_FILE}"
+  elif [ $(lspci -nn | grep -ie "\[0106\]" | wc -l) -gt 0 ] && [ "${MACHINE}" -eq "NATIVE" ]; then
+    deleteConfigKey "cmdline.SataPortMap" "${USER_CONFIG_FILE}"
+  else
+    dialog --backtitle "`backtitle`" --title "ARC Disk Config" \
+      --infobox "Your Disk configuration is not known! ABORT!!!" 0 0
+    sleep 3
+    return 1
+  fi
+  dialog --backtitle "`backtitle`" --title "ARC Disk Config" \
+   --infobox "Disk configuration successfull!" 0 0
+    sleep 3
 }
 
 ###############################################################################
@@ -431,6 +453,7 @@ if [ "x$1" = "xb" -a -n "${MODEL}" -a -n "${BUILD}" -a loaderIsConfigured ]; the
 fi
 automatedupdate
 automatedbuild
+arcdisk
 arcnet
 make
 reboot
