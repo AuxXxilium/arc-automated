@@ -59,56 +59,6 @@ function backtitle() {
 }
 
 ###############################################################################
-# Check for Updates
-function automatedupdate() {
-dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-  --infobox "Checking last version" 0 0
-ACTUALVERSION="v${ARC_VERSION}"
-TAG="`curl --insecure -s https://api.github.com/repos/AuxXxilium/arc-automated/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`"
-if [ $? -ne 0 -o -z "${TAG}" ]; then
-    dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-      --msgbox "Error checking new version" 0 0
-    continue
-fi
-if [ "$TAG" != "$ACTUALVERSION" ]; then
-dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-  --infobox "Downloading last version ${TAG}" 0 0
-# Download update file
-STATUS=`curl --insecure -w "%{http_code}" -L \
-  "https://github.com/AuxXxilium/arc-automated/releases/download/${TAG}/update.zip" -o /tmp/update.zip`
-  if [ $? -ne 0 -o ${STATUS} -ne 200 ]; then
-      dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-        --msgbox "Error downloading update file" 0 0
-      continue
-  fi
-  unzip -oq /tmp/update.zip -d /tmp
-  if [ $? -ne 0 ]; then
-      dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-        --msgbox "Error extracting update file" 0 0
-      continue
-  fi
-  # Check checksums
-  (cd /tmp && sha256sum --status -c sha256sum)
-  if [ $? -ne 0 ]; then
-      dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-        --msgbox "Checksum do not match!" 0 0
-      continue
-  fi
-  dialog --backtitle "`backtitle`" --title "Update ARC" --aspect 18 \
-      --infobox "Installing new files" 0 0
-  # Process update-list.yml
-    while IFS="=" read KEY VALUE; do
-    mv /tmp/`basename "${KEY}"` "${VALUE}"
-    done < <(readConfigMap "replace" "/tmp/update-list.yml")
-    while read F; do
-      [ -f "${F}" ] && rm -f "${F}"
-      [ -d "${F}" ] && rm -Rf "${F}"
-    done < <(readConfigArray "remove" "/tmp/update-list.yml")
-  arc-reboot.sh config
-fi
-}
-
-###############################################################################
 # Automated ARC Build
 function automatedbuild() {
   DIRTY=1
@@ -451,7 +401,7 @@ if [ "x$1" = "xb" -a -n "${MODEL}" -a -n "${BUILD}" -a loaderIsConfigured ]; the
   make
   boot
 fi
-automatedupdate
+
 automatedbuild
 arcdisk
 arcnet
