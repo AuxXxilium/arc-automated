@@ -173,6 +173,7 @@ function arcdisk() {
   dialog --backtitle "`backtitle`" --title "ARC Disk Config" \
     --infobox "Disk configuration successfull!" 0 0
   sleep 3
+  fi
 }
 
 ###############################################################################
