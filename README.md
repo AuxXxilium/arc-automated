@@ -1,4 +1,4 @@
-# ARC Redpill Loader
+# Arc Automated Loader
 
 ### Bugreport
 
