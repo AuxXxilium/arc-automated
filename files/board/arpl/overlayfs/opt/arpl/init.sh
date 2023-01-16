@@ -23,7 +23,7 @@ fi
 
 # Shows title
 clear
-TITLE="Arc Loader v${ARPL_VERSION}"
+TITLE="Arc Automated Loader v${ARPL_VERSION}"
 printf "\033[1;44m%*s\n" $COLUMNS ""
 printf "\033[1;44m%*s\033[A\n" $COLUMNS ""
 printf "\033[1;32m%*s\033[0m\n" $(((${#TITLE}+$COLUMNS)/2)) "${TITLE}"
@@ -84,6 +84,8 @@ if [ ! -f "${USER_CONFIG_FILE}" ]; then
   writeConfigKey "addons" "{}" "${USER_CONFIG_FILE}"
   writeConfigKey "addons.misc" "" "${USER_CONFIG_FILE}"
   writeConfigKey "addons.acpid" "" "${USER_CONFIG_FILE}"
+  writeConfigKey "addons.cpuinfo" "" "${USER_CONFIG_FILE}"
+  writeConfigKey "addons.nvme" "" "${USER_CONFIG_FILE}"
   writeConfigKey "modules" "{}" "${USER_CONFIG_FILE}"
   # Initialize with real MAC
   writeConfigKey "cmdline.netif_num" "1" "${USER_CONFIG_FILE}"
