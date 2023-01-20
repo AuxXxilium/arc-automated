@@ -515,7 +515,7 @@ function boot() {
 
 if [ "x$1" = "xb" -a -n "${MODEL}" -a -n "${BUILD}" -a loaderIsConfigured ]; then
   make
-  boot
+  boot && exit 0 || sleep 5
 fi
 automatedupdate
 automatedbuild
