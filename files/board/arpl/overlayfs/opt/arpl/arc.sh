@@ -22,20 +22,6 @@ else
     MACHINE="NATIVE"
 fi
 
-# Check for RAID/SCSI
-if [ $(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
-    ADRAID="1"
-else
-    ADRAID="0"
-fi
-
-# Check for SATA
-if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 0 ]; then
-    ADSATA="1"
-else
-    ADSATA="0"
-fi
-
 # Dirty flag
 DIRTY=0
 
@@ -171,7 +157,7 @@ function automatedbuild() {
 # Make Disk Config
 function arcdisk() {
   # Check for diskconfig
-  if [ "$DT" = "true" ] && [ "$ADRAID" -gt 0 ]; then
+  if [ "$DT" = "true" ] && [ $(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
     # There is no Raid/SCSI Support for DT Models
     dialog --backtitle "`backtitle`" --title "Arc Disk Config" \
       --infobox "Device Tree Model selected - Raid/SCSI Controller not supported!" 0 0
@@ -184,7 +170,7 @@ function arcdisk() {
     deleteConfigKey "cmdline.DiskIdxMap" "${USER_CONFIG_FILE}"
     sleep 1
     # Get Number of Sata Drives
-    if [ "$ADSATA" -gt 0 ]; then
+    if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 0 ]; then
       rm -f ${TMP_PATH}/satadrives
       touch ${TMP_PATH}/satadrives
       pcis=$(lspci -nnk | grep -ie "\[0106\]" | awk '{print $1}')
@@ -197,7 +183,7 @@ function arcdisk() {
       done
     fi
     # Get Number of Raid/SCSI Drives
-    if [ "$ADRAID" -gt 0 ]; then
+    if [ $(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
       rm -f ${TMP_PATH}/raiddrives
       touch ${TMP_PATH}/raiddrives
       pcis=$(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | awk '{print $1}')
@@ -210,7 +196,7 @@ function arcdisk() {
       done
     fi
     # Set SataPortMap for multiple Sata Controller
-    if [ "$ADSATA" -gt 1 ]; then
+    if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 1 ]; then
     DRIVES=$(awk '{print$1}' ${TMP_PATH}/satadrives)
     writeConfigKey "cmdline.SataPortMap" "$DRIVES" "${USER_CONFIG_FILE}"
 		dialog --backtitle "`backtitle`" --title "Arc Disk Config" \
@@ -218,7 +204,7 @@ function arcdisk() {
   	sleep 3
     fi
     # Set SataPortMap for Raid/SCSI Controller
-    if [ "$ADSATA" -gt 0 ] && [ "$ADRAID" -gt 0 ]; then
+    if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 0 ] && [ $(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
     DRIVES=$(awk '{print$1}' ${TMP_PATH}/satadrives)
     writeConfigKey "cmdline.SataPortMap" "$DRIVES" "${USER_CONFIG_FILE}"
 		dialog --backtitle "`backtitle`" --title "Arc Disk Config" \
