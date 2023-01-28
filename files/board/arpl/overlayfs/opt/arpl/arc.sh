@@ -168,47 +168,45 @@ function arcdisk() {
       --infobox "Arc Disk configuration started!" 0 0
     deleteConfigKey "cmdline.SataPortMap" "${USER_CONFIG_FILE}"
     deleteConfigKey "cmdline.DiskIdxMap" "${USER_CONFIG_FILE}"
+    rm -f ${TMP_PATH}/drives
+    touch ${TMP_PATH}/drives
     sleep 1
     # Get Number of Sata Drives
     if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 0 ]; then
-      rm -f ${TMP_PATH}/satadrives
-      touch ${TMP_PATH}/satadrives
       pcis=$(lspci -nnk | grep -ie "\[0106\]" | awk '{print $1}')
       [ ! -z "$pcis" ]
       # loop through SATA controllers
       for pci in $pcis; do
       # get attached block devices (exclude CD-ROMs)
-      SATADRIVES=$(ls -la /sys/block | fgrep "$pci" | grep -v "sr.$" | wc -l)
-      echo -n "$SATADRIVES" >> ${TMP_PATH}/satadrives
+      DRIVES=$(ls -la /sys/block | fgrep "$pci" | grep -v "sr.$" | wc -l)
+      echo -n "${DRIVES}" >> ${TMP_PATH}/drives
       done
     fi
     # Get Number of Raid/SCSI Drives
     if [ $(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
-      rm -f ${TMP_PATH}/raiddrives
-      touch ${TMP_PATH}/raiddrives
       pcis=$(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | awk '{print $1}')
       [ ! -z "$pcis" ]
       # loop through non-SATA controllers
       for pci in $pcis; do
       # get attached block devices (exclude CD-ROMs)
-      RAIDDRIVES=$(ls -la /sys/block | fgrep "$pci" | grep -v "sr.$" | wc -l)
-      echo -n "$RAIDDRIVES" >> ${TMP_PATH}/raiddrives
+      DRIVES=$(ls -la /sys/block | fgrep "$pci" | grep -v "sr.$" | wc -l)
+      echo -n "${DRIVES}" >> ${TMP_PATH}/drives
       done
     fi
     # Set SataPortMap for multiple Sata Controller
     if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 1 ]; then
-    DRIVES=$(awk '{print$1}' ${TMP_PATH}/satadrives)
-    writeConfigKey "cmdline.SataPortMap" "$DRIVES" "${USER_CONFIG_FILE}"
+    DRIVES=$(awk '{print$1}' ${TMP_PATH}/drives)
+    writeConfigKey "cmdline.SataPortMap" "${DRIVES}" "${USER_CONFIG_FILE}"
 		dialog --backtitle "`backtitle`" --title "Arc Disk Config" \
-    --infobox "SataPortMap: $DRIVES" 0 0
+    --infobox "SataPortMap: ${DRIVES}" 0 0
   	sleep 3
     fi
     # Set SataPortMap for Raid/SCSI Controller
     if [ $(lspci -nnk | grep -ie "\[0106\]" | wc -l) -gt 0 ] && [ $(lspci -nnk | grep -ie "\[0104\]" -ie "\[0107\]" | wc -l) -gt 0 ]; then
-    DRIVES=$(awk '{print$1}' ${TMP_PATH}/satadrives)
-    writeConfigKey "cmdline.SataPortMap" "$DRIVES" "${USER_CONFIG_FILE}"
+    DRIVES=$(awk '{print$1}' ${TMP_PATH}/drives)
+    writeConfigKey "cmdline.SataPortMap" "${DRIVES}" "${USER_CONFIG_FILE}"
 		dialog --backtitle "`backtitle`" --title "Arc Disk Config" \
-    --infobox "SataPortMap: $DRIVES" 0 0
+    --infobox "SataPortMap: ${DRIVES}" 0 0
   	sleep 3
     fi
   dialog --backtitle "`backtitle`" --title "Arc Disk Config" \
