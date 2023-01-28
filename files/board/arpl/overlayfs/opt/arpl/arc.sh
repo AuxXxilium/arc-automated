@@ -504,7 +504,7 @@ if [ "x$1" = "xb" -a -n "${MODEL}" -a -n "${BUILD}" -a loaderIsConfigured ]; the
   make
   boot && exit 0 || sleep 5
 fi
-automatedupdate
+#automatedupdate
 automatedbuild
 arcdisk
 arcnet
