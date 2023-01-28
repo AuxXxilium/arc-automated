@@ -235,26 +235,18 @@ function arcnet() {
     if [ "$NETNUM" -gt 0 ]; then
       MAC1="`readModelKey "${MODEL}" "mac1"`"
       writeConfigKey "cmdline.mac1"           "$MAC1" "${USER_CONFIG_FILE}"
-      MACN1="${MAC1:0:2}:${MAC1:2:2}:${MAC1:4:2}:${MAC1:6:2}:${MAC1:8:2}:${MAC1:10:2}"
-      ip link set dev eth0 address ${MACN1} 2>&1
     fi
     if [ "$NETNUM" -gt 1 ]; then
       MAC2="`readModelKey "${MODEL}" "mac2"`"
       writeConfigKey "cmdline.mac2"           "$MAC2" "${USER_CONFIG_FILE}"
-      MACN2="${MAC2:0:2}:${MAC2:2:2}:${MAC2:4:2}:${MAC2:6:2}:${MAC2:8:2}:${MAC2:10:2}"
-      ip link set dev eth1 address ${MACN2} 2>&1
     fi
     if [ "$NETNUM" -gt 2 ]; then
       MAC3="`readModelKey "${MODEL}" "mac3"`"
       writeConfigKey "cmdline.mac3"           "$MAC3" "${USER_CONFIG_FILE}"
-      MACN3="${MAC3:0:2}:${MAC3:2:2}:${MAC3:4:2}:${MAC3:6:2}:${MAC3:8:2}:${MAC3:10:2}"
-      ip link set dev eth2 address ${MACN3} 2>&1
     fi
     if [ "$NETNUM" -gt 3 ]; then
       MAC4="`readModelKey "${MODEL}" "mac4"`"
       writeConfigKey "cmdline.mac4"           "$MAC4" "${USER_CONFIG_FILE}"
-      MACN4="${MAC4:0:2}:${MAC4:2:2}:${MAC4:4:2}:${MAC4:6:2}:${MAC4:8:2}:${MAC4:10:2}"
-      ip link set dev eth3 address ${MACN4} 2>&1
     fi
     dialog --backtitle "`backtitle`" \
             --title "Loading Arc MAC Table" --infobox "Set new MAC for ${NETNUM} Adapter" 0 0
@@ -264,7 +256,7 @@ function arcnet() {
   sleep 3
   dialog --backtitle "`backtitle`" --title "Arc Config" \
       --infobox "ARC configuration successfull!" 0 0
-  sleep 3
+  sleep 1
   dialog --clear --no-items --backtitle "`backtitle`"
 }
 
